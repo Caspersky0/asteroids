@@ -12,7 +12,7 @@ def main():
     dt = 0.0
     while True:
         dt = clock.tick(60) / 1000
-        print(dt)
+        #print(dt)
 
         log_state()
 
