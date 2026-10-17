@@ -8,6 +8,12 @@ class Player(CircleShape):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
         self.cooldown_timer = 0
+        self.score = 0
+        self.blink_timer = 0
+        self.blink_interval = 0.1
+        self.blink_elapsed = 0
+        self.is_visible = True
+        self.lives = 3
     
         # in the Player class
     def triangle(self) -> list[pygame.Vector2]:
@@ -19,6 +25,8 @@ class Player(CircleShape):
         return [a, b, c]
 
     def draw(self, screen: pygame.Surface) -> None:
+        if not self.is_visible:
+            return
         pygame.draw.polygon(
             screen,
             "white",
@@ -30,8 +38,6 @@ class Player(CircleShape):
 
     def update(self, dt: float) -> None:
         self.cooldown_timer -= dt
-
-
         keys = pygame.key.get_pressed()
         
         if keys[pygame.K_a]:
@@ -44,7 +50,18 @@ class Player(CircleShape):
             self.move(-dt)
         if keys[pygame.K_SPACE]:
             self.shoot()
-    
+        
+        if self.blink_timer > 0:
+            self.blink_timer -= dt
+            self.blink_elapsed += dt
+            if self.blink_elapsed >= self.blink_interval:
+                self.is_visible = not self.is_visible
+                self.blink_elapsed = 0
+        else:
+            self.is_visible = True
+            
+
+
     def move(self, dt):
         foward = pygame.Vector2(0, 1).rotate(self.rotation)
         foward *= PLAYER_SPEED * dt
