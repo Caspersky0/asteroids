@@ -8,14 +8,34 @@ from constants import LINE_WIDTH, ASTEROID_MIN_RADIUS
 class Asteroid(CircleShape):
     def __init__(self, x: float, y: float, radius: float) -> None:
         super().__init__(x, y, radius)
+        self.shape = self.generate_shape()
+
+    def generate_shape(self):
+        points = []
+        point_count = 10
+
+        for i in range(point_count):
+            angle = i * 360 / point_count
+
+            random_radius = self.radius * random.uniform(0.8, 1.2)
+
+            point = pygame.Vector2(0, 1).rotate(angle)
+            point *= random_radius
+
+            points.append(point)
+        return points
 
     def draw(self, screen: pygame.Surface) -> None:
-        pygame.draw.circle(
+        points = [
+            self.position + point
+            for point in self.shape
+        ]
+
+        pygame.draw.polygon(
             screen,
             "white",
-            self.position,
-            self.radius,
-            LINE_WIDTH
+            points,
+            2,
         )
 
     def update(self, dt: float) -> None:
